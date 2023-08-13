@@ -1,20 +1,28 @@
 import { useState } from "react";
 
+
+//Game manages top level data
+//  squares and board state
+//  history of the game
+//  X or O to set in square
 export default function Game() {
 
-  const [xIsNext, setXIsNext] = useState(true);
   const [history, setHistory] = useState([Array(9).fill(null)]);
-  const currentSquares = history[history.length - 1];
+  const [currentMove, setCurrentMove] = useState(0);
+  const currentSquares = history[currentMove];
+  const xIsNext = currentMove % 2 === 0;
+
 
   function handlePlay(nextSquares) {
-    
-    //enumerate all items in history into new history and add nextSquares to history.
-    setHistory([...history, nextSquares]);
-    setXIsNext(!xIsNext);
+
+    //enumerate all items in history from [0] - currentMove + 1 into new history and add nextSquares to history.
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    setHistory(nextHistory);
+    setCurrentMove(nextHistory.length -1);
   }
 
   function jumpTo(nextMove){
-
+    setCurrentMove(nextMove);
   }
 
   const moves = history.map((squares, move) => {
@@ -26,7 +34,7 @@ export default function Game() {
     }
 
     return (
-      <li>
+      <li key={move}>
         <button onClick={() => jumpTo(move)}>{description}</button>
       </li>
     );
